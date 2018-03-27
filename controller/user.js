@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 
 class UserController {
     static async register(ctx) {

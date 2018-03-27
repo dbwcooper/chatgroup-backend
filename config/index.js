@@ -1,5 +1,6 @@
 module.exports = {
-    port: 5001,
-    secret: 'O1GENWS83NZ5S4D8B13MXFF9WF8R6DZ',
-    mongodb: 'mongodb://127.0.0.1:27017/shop'
+    port: 17317,
+    secret: 'O1GENWS8%5S$Ds_8B13MX_#12WF8R6DZ',
+    // mlab 网站上免费的 500M mongodb数据库
+    mongodb: 'mongodb://<dbwcooper>:<dbwcooper>@ds123029.mlab.com:23029/chatgroup'
 };
