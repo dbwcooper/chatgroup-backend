@@ -1,29 +1,16 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const { UserModel } = require('../config/mongo');
 
-/** 用户model 模型
- * require 将当前字段设置为必须拥有值 即是不能为空。
- * unique: true,  设置当前字段 username 在users 集合里面具有唯一性
- */
+const createUser = (user) => {
+    return UserModel.create(user,function (err) { 
+        if(err && err.toString().match('E11000 duplicate key')){
+            console.log('用户名已存在');
+            return 400;
+        }else{
+            console.log("insert user success");
+        }
+    }).then(data => data);
+}
 
-const User = mongoose.model('User', new Schema({
-    username: {
-        type: String,
-        unique: true,
-        require: true,
-    },
-    password: {
-        type: String,
-        require: true,
-    },
-    avatar: {
-        type: Object,
-        require: true,
-    },
-    moment: {
-        type: Date,
-        default: Date.now(),
-    },
-}));
-
-module.exports = User;
+module.exports = {
+    createUser
+}

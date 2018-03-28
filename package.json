@@ -8,6 +8,6 @@
     "jsonwebtoken": "^8.2.0",
     "koa-router": "^7.4.0",
     "koa2": "^2.0.0-alpha.7",
-    "mongoose": "^5.0.11"
+    "mongoose": "^5.0.12"
   }
 }

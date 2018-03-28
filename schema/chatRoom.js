@@ -1,36 +1,32 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const Schema = require('mongoose').Schema;
 
 /**
- * Comment 用户消息model模型 
+ * ChatRoom 聊天室 Schema
  * name: 聊天室名
  * moment: 创建时间
  * originalOwner: 创建者
  * onlineUsers: 在线人数 -> { username, avatar: {} }
  * 
  */
-const Comment = mongoose.model('Comment', new Schema({
-    username: {
-        type: String,
-        require: true,
-    },
+const ChatRoomSchema = new Schema({
     roomname: {
         type: String,
+        unique: true,
         require: true,
     },
-    content: {
+    originalowner: {
         type: String,
         require: true,
+    },
+    onlineusers: {
+        type: Array,
+        require: true,
+        default: [],
     },
     moment: {
         type: Date,
         default: Date.now(),
     },
-    md: {
-        type: Boolean,
-        default: false,
-    }
-}));
+});
 
-
-module.exports = Comment;
+module.exports = ChatRoomSchema;
