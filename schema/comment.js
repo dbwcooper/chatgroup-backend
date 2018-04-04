@@ -1,21 +1,21 @@
 const Schema = require('mongoose').Schema;
 
 /**
- * Comment 用户消息model模型 
- * name: 聊天室名
- * moment: 创建时间
- * originalOwner: 创建者
- * onlineUsers: 在线人数 -> { username, avatar: {} }
+ *  userName: 'George James',
+ *  roomLink:
+ *  avatar: { color: '#1890ff', alif: 'C' },
+ *  moment: 1521300207000,
+ *  content: '<span style="color: red">12321332</span>',
+ *  md: true
  * 
  */
 
 const CommentSchema = new Schema({
-    _id: Schema.Types.ObjectId,
-    username: {
+    userName: {
         type: String,
         require: true,
     },
-    roomname: {
+    roomLink: {
         type: String,
         require: true,
     },
@@ -23,9 +23,10 @@ const CommentSchema = new Schema({
         type: String,
         require: true,
     },
+    avatar: Schema.Types.Mixed,
     moment: {
         type: Date,
-        default: Date.now(),
+        default: new Date().getTime(),
     },
     md: {
         type: Boolean,

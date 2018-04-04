@@ -6,8 +6,11 @@
   "dependencies": {
     "bluebird": "^3.5.1",
     "jsonwebtoken": "^8.2.0",
+    "koa-body": "^2.5.0",
     "koa-router": "^7.4.0",
     "koa2": "^2.0.0-alpha.7",
-    "mongoose": "^5.0.12"
+    "koa2-cors": "^2.0.5",
+    "mongoose": "^5.0.12",
+    "sha1": "^1.1.1"
   }
 }

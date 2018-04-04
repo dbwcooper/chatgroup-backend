@@ -2,29 +2,36 @@ const Schema = require('mongoose').Schema;
 
 /**
  * ChatRoom 聊天室 Schema
- * name: 聊天室名
+ * roomLink: 聊天室名 只能为英文
  * moment: 创建时间
- * originalOwner: 创建者
+ * userName: 创建者
  * onlineUsers: 在线人数 -> { username, avatar: {} }
  * 
  */
 const ChatRoomSchema = new Schema({
-    roomname: {
-        type: String,
+    roomLink: {
+        type: Schema.Types.String,
         unique: true,
         require: true,
     },
-    originalowner: {
-        type: String,
+    userName: {
+        type: Schema.Types.String,
         require: true,
     },
-    onlineusers: {
-        type: Array,
-        require: true,
-        default: [],
+    title: {
+        type: Schema.Types.String,
+    },
+    onlineList:[
+        {
+            userName: Schema.Types.String,
+            avatar: Schema.Types.Mixed,
+        }
+    ],
+    annoucement: {
+        type: Schema.Types.String,
     },
     moment: {
-        type: Date,
+        type: Schema.Types.Date,
         default: Date.now(),
     },
 });

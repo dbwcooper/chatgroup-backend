@@ -5,7 +5,7 @@ const UserSchema = require('../schema/user');
 const CommentSchema = require('../schema/comment');
 const ChatRoomSchema = require('../schema/chatRoom');
 
-mongoose.Promise = require('bluebird')
+mongoose.Promise = require('bluebird');
 
 const options = {  
     server: {
