@@ -2,7 +2,8 @@
 const {
     createRoom,
     _findRoomsByTitle,
-    _findRoomByLink
+    _findRoomByLink,
+    _getRoomMenuByName
 } = require('../models/room');
 
 /**
@@ -14,21 +15,27 @@ const {
  *  userName: 用户名
  * }
  */
-const create = async (ctx) => {
-    let model = JSON.parse(ctx.request.body);
-    let result = { code: 200 }
+const create =  async (ctx) => {
+    let model = ctx.request.body;
+    let result = {};
     if(!model.roomLink) {
         result.code = 400;
         result.msg = "请检查聊天室名";
         ctx.response.body = result;
     }
-    console.log('model', model);
-    let code = await createRoom(model);
-    if (code === 200) result.msg = '创建成功!';
-    else result.msg = '此聊天室已存在!';
-    result.code = code;
-    console.log(result);
+
+    let data = await createRoom(model);
+    if (data === 200){
+        result.code = 200;
+        result.msg = '创建成功!';
+    }
+    else{
+        result.code = 400;
+        result.msg = data;
+    }
+    // ctx.response.statusCode = 200;
     ctx.response.body = result;
+    // console.log(ctx.response);
 }
 
 /**
@@ -79,9 +86,25 @@ const findRoomByLink = async (ctx) => {
     ctx.response.body = result;
 }
 
+const getRoomMenuByName = async (ctx) => {
+    let userName = ctx.request.body.userName;
+    let result = {};
+    let data = await _getRoomMenuByName(userName);
+    if (data === 400) {
+        result.code = 400;
+        result.msg = "服务器异常";
+    } else {
+        result.code = 200;
+        result.msg = "查询成功";
+        result.data = data;
+    }
+    ctx.response.body = result;
+}
+
 module.exports= {
     create,
     findRoomByLink,
     findRoomsByTitle,
+    getRoomMenuByName
 }
 

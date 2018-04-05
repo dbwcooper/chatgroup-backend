@@ -7,12 +7,14 @@ const jwtSign = (userName) => jwt.sign({ userName }, SECRET, { expiresIn: '3 day
 
 //解密出来包括三部分   加密的用户名 ，token生成时间 token到期时间
 // { userName: 'testName', iat: 1494061742, exp: 1494320942 }
-const jwtVerify = (ctx, next) => {
+const jwtVerify = async (ctx, next) => {
     try {
         let token = ctx.request.headers["x-access-token"];
-        let decode = jwt.verify(token, SECRET);
-        ctx.request.body.userName = decode.userName;
-        next();
+        if (token) {
+            let decode = jwt.verify(token, SECRET);
+            ctx.request.body.userName = decode.userName;
+        }
+        await next();
     } catch (e) {
         let result = {
             "code": 400,

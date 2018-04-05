@@ -25,7 +25,22 @@ const _findUserByName = (userName) => {
     }).then(data => data)
 }
 
+const _insertRoomToUser = (room, userName) => {
+    return new Promise((resolve, reject) => {
+        UserModel.findOne({ userName }, function (err, user) {
+            //如果err==null，则person就能取到数据
+            if (err) resolve(400);
+            user.roomList.push(room);
+            user.save(function(err, user){
+                if (err) reject(400);
+                resolve(200)
+            })
+        });
+    }).then(code => code)
+}
+
 module.exports = {
     _createUser,
-    _findUserByName
+    _findUserByName,
+    _insertRoomToUser
 }

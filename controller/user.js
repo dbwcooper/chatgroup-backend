@@ -7,9 +7,8 @@ const sha1 = require('sha1');
  * post 请求的body被封装在ctx.request.body中 request是koa封装的请求对象， req是node封装的请求对象
  */
 const register = async (ctx) => {
-    let user = JSON.parse(ctx.request.body);
+    let user = ctx.request.body;
     let result = {}
-    
     if (!user.userName || !user.pwd || user.pwd !== user.rpwd) {
         result.code = 400;
         result.msg = "请检查您的用户名和密码";
@@ -33,12 +32,12 @@ const register = async (ctx) => {
  * 用户登陆
  */
 const login = async (ctx, next) => {
-    let user = JSON.parse(ctx.request.body);
+    let user = ctx.request.body;
     let result = {
         code: 200
     }
 
-    if (!user.userName || user.pwd ) {
+    if (!user.userName || !user.pwd ) {
         result.code = 400;
         result.msg = "请检查您的用户名和密码";
         ctx.response.body = result;
@@ -46,7 +45,7 @@ const login = async (ctx, next) => {
     user.pwd = sha1(user.pwd);
 
     let data = await _findUserByName(user.userName);
-    if (data === 400) {
+    if (data === 400 || !data) {
         // 用户名不存在
         result.code = data;
         result.msg = "用户名不存在";
@@ -55,7 +54,8 @@ const login = async (ctx, next) => {
         result.msg = "登录成功";
         result.data = {
             token: jwtSign(user.userName),
-            roomIdList: data.roomIdList
+            roomList: data.roomList,
+            avatar: data.avatar
         };
     } else{
         result.code = 400;

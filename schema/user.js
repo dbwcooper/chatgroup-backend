@@ -17,10 +17,11 @@ const UserSchema = new Schema({
         require: true,
     },
     avatar: Schema.Types.Mixed, // 混合类型
-    roomIdList:[
+    roomList:[
         {
             roomLink: Schema.Types.String,
-            msgCount: Schema.Types.Number
+            title: Schema.Types.String,
+            annoucement: Schema.Types.String
         }
     ],
     moment: {
