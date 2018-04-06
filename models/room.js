@@ -1,4 +1,4 @@
-const { ChatRoomModel, UserModel } = require('../config/mongo');
+const { ChatRoomModel, UserModel, CommentModel } = require('../config/mongo');
 const { _insertRoomToUser } = require('../models/user');
 
 /**
@@ -59,9 +59,22 @@ const _findRoomsByTitle = (title) => {
  */
 const _findRoomByLink = (roomLink) => {
     return new Promise((resolve, reject) => {
+        // chatroom仍然有schema限制
         ChatRoomModel.findOne({ roomLink }, function (err, chatroom) {
             if (err) resolve(400);
-            resolve(chatroom);
+            CommentModel.find({ roomLink }, 'avatar content md moment userName').sort({ _id: 1 }).exec(function (err, converseList) {
+                if (err) resolve(400);
+                // 转换为一个新的不受Schema约束的对象
+                let result = chatroom.toObject() ;
+                result.converseList = converseList;
+                delete result._id;
+                delete result.__v;
+                delete result.title;
+                delete result.userName;
+                // 删除不必要的信息
+                resolve(result);
+            });
+            
         });
     }).then(chatroom => chatroom)
 }
@@ -73,7 +86,6 @@ const _findRoomByLink = (roomLink) => {
 const _getRoomMenuByName = (userName) => {
     // 默认用户
     if(!userName) userName = "cooper";
-    console.log('userName', userName);
     return new Promise((resolve, reject) => {
         UserModel.find({ userName }, 'roomList', function (err, roomMenu) {
             if (err) resolve(400);

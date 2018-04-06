@@ -1,7 +1,7 @@
 
 const { _findRoomByLink } = require('../models/room');
 
-const { _createComment, _findComments } = require('../models/comment');
+const { _createComment, _getRoomDetailByLink } = require('../models/comment');
 
 
 /**
@@ -17,11 +17,12 @@ const { _createComment, _findComments } = require('../models/comment');
 const createComment = async (ctx) => {
   
   let roomLink = ctx.params.roomLink; //拿到房间名
-  let model = JSON.parse(ctx.request.body);
+  let model = ctx.request.body;
   let result = {};
   model.roomLink = roomLink;
   // 先查询看是否存在roomLink
 
+  console.log('createComment');
   let data = await _findRoomByLink(roomLink);
   if (data === 400 || !data.roomLink) {
     result.code = 400;
@@ -41,9 +42,9 @@ const createComment = async (ctx) => {
 }
 
 // 根据roomLink 找到所有的评论 以时间降序
-const findComments = async (ctx) => {
+const getRoomDetailByLink = async (ctx) => {
   let roomLink = ctx.params.roomLink; //拿到房间名
-  let data = await _findComments(roomLink);
+  let data = await _getRoomDetailByLink(roomLink);
   let result = {};
   if (data === 400) {
     result.code = 400;
@@ -58,6 +59,6 @@ const findComments = async (ctx) => {
 
 module.exports = {
   createComment,
-  findComments
+  getRoomDetailByLink
 }
 

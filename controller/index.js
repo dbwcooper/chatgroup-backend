@@ -15,7 +15,7 @@ const {
 
 const {
     createComment,
-    findComments
+    getRoomDetailByLink
 } = require('./comment');
 
 router
@@ -28,10 +28,10 @@ router
     .post('chatroom/create', jwtVerify, create)   // 新建一个聊天室
     .get('chatroom/list/:title', findRoomsByTitle)  // 根据输入模糊查找chatroom列表
     .get('chatroom/roomMenu', jwtVerify, getRoomMenuByName) // 返回roomMenu 如果有用户信息就返回当前用户下的房间名，如果没有就返回默认房间列表
-    .get('chatroom/:roomLink', findRoomByLink) // 根据roomLink 获取一条room信息。
+    .get('chatroom/:roomLink', findRoomByLink) // 根据roomLink 获取一条room信息 并返回当前房间的聊天信息。
 
-    .post('comment/:roomLink', jwtVerify, createComment)   // 新建一个聊天室
-    .get('comment/:roomLink', findComments)   // 查找roomLink的comments
+    .post('comment/:roomLink', jwtVerify, createComment)   // 新建一条聊天记录
+    .get('comment/:roomLink', getRoomDetailByLink)   // 查找roomLink的comments
 
 
 module.exports = router;

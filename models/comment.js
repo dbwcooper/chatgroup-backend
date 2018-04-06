@@ -9,7 +9,7 @@ const _createComment = (model) => {
   }).then(code => code);
 }
 
-const _findComments = (roomLink) => {
+const _getRoomDetailByLink = (roomLink) => {
   return new Promise((resolve, reject) => {
     // _id 是根据时间生成的，所以可以根据其来排序
     CommentModel.find({ roomLink }).sort({ _id: 1 }).exec(function (err, data) {
@@ -22,5 +22,5 @@ const _findComments = (roomLink) => {
 
 module.exports = {
   _createComment,
-  _findComments
+  _getRoomDetailByLink
 }
