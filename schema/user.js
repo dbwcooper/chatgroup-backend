@@ -17,13 +17,7 @@ const UserSchema = new Schema({
         require: true,
     },
     avatar: Schema.Types.Mixed, // 混合类型
-    roomList:[
-        {
-            roomLink: Schema.Types.String,
-            title: Schema.Types.String,
-            annoucement: Schema.Types.String
-        }
-    ],
+    roomList: [], // 混合类型,
     moment: {
         type: Schema.Types.Date,
         default: Date.now,

@@ -3,7 +3,7 @@ const {
     createRoom,
     _findRoomsByTitle,
     _findRoomByLink,
-    _getRoomMenuByName
+    _getRoomMenu
 } = require('../models/room');
 
 /**
@@ -33,9 +33,7 @@ const create =  async (ctx) => {
         result.code = 400;
         result.msg = data;
     }
-    // ctx.response.statusCode = 200;
     ctx.response.body = result;
-    // console.log(ctx.response);
 }
 
 /**
@@ -86,10 +84,10 @@ const findRoomByLink = async (ctx) => {
     ctx.response.body = result;
 }
 
-const getRoomMenuByName = async (ctx) => {
+const getRoomMenu = async (ctx) => {
     let userName = ctx.request.body.userName;
     let result = {};
-    let data = await _getRoomMenuByName(userName);
+    let data = await _getRoomMenu(userName);
     if (data === 400) {
         result.code = 400;
         result.msg = "服务器异常";
@@ -105,6 +103,6 @@ module.exports= {
     create,
     findRoomByLink,
     findRoomsByTitle,
-    getRoomMenuByName
+    getRoomMenu
 }
 

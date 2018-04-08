@@ -1,5 +1,10 @@
 
-const { _createUser, _findUserByName } = require('../models/user');
+const { 
+    _createUser,
+    _findUserByName,
+    _getUserList,
+    _inviteUser
+} = require('../models/user');
 const { jwtSign } = require('../middlewares/jwt');
 const sha1 = require('sha1');
 /**
@@ -8,6 +13,7 @@ const sha1 = require('sha1');
  */
 const register = async (ctx) => {
     let user = ctx.request.body;
+    console.log('user', user);
     let result = {}
     if (!user.userName || !user.pwd || user.pwd !== user.rpwd) {
         result.code = 400;
@@ -16,14 +22,15 @@ const register = async (ctx) => {
     }
     user.pwd = sha1(user.pwd);
     delete user.rpwd;
-    // 返回的code 200/400
-    result.code = await _createUser(user);
-    if (result.code === 200) {
+    
+    result.data = await _createUser(user);
+    if (result.data === 400) {
+        result.msg = '用户名已被注册';
+    } else  {
         let token = jwtSign(user.userName);
         result.msg = '恭喜你注册成功!';
-        result.data = { token }
-    } else {
-        result.msg = '用户名已被注册';
+        result.code = 200;
+        result.data.token = token;
     }
     ctx.response.body = result;
 }
@@ -78,8 +85,42 @@ const logout = async (ctx, next) => {
     ctx.response.body = result;
 }
 
+const getUserList = async (ctx, next) => {
+    let userName = ctx.params.userName;
+    let result = {};
+    let data = await _getUserList(userName);
+    
+    if(data === 400) {
+        result.code = 400;
+        result.msg = '服务端错误';
+    } else {
+        result.code = 200;
+        result.msg = '查询成功!';
+        result.data = data;
+    }
+    ctx.response.body = result;
+}
+
+const inviteUser = async (ctx, next) => {
+    let model = ctx.request.body;
+    let result = {};
+    let data = await _inviteUser(model);
+
+    if (data === 400) {
+        result.code = 400;
+        result.msg = '服务端错误';
+    } else {
+        result.code = 200;
+        result.msg = '查询成功!';
+        result.data = data;
+    }
+    ctx.response.body = result;
+}
+
 module.exports = {
     register,
     login,
     logout,
+    getUserList,
+    inviteUser
 }

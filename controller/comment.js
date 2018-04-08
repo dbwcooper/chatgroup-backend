@@ -14,23 +14,16 @@ const { _createComment, _getRoomDetailByLink } = require('../models/comment');
  *  md: true
  * @param {*} ctx 
  */
-const createComment = async (ctx) => {
-  
-  let roomLink = ctx.params.roomLink; //拿到房间名
-  let model = ctx.request.body;
+const createComment = async (comment) => {
   let result = {};
-  model.roomLink = roomLink;
-  // 先查询看是否存在roomLink
-
-  console.log('createComment');
-  let data = await _findRoomByLink(roomLink);
+  comment = JSON.parse(comment);
+  let data = await _findRoomByLink(comment.roomLink);
   if (data === 400 || !data.roomLink) {
     result.code = 400;
     result.msg = "聊天室不存在!";
-    ctx.response.body = result;
   }
 
-  let code = await _createComment(model);
+  let code = await _createComment(comment);
   if(code === 400) {
     result.code = 400;
     result.msg = "评论失败!";
@@ -38,7 +31,7 @@ const createComment = async (ctx) => {
     result.code = 200;
     result.msg = "评论成功";
   }
-  ctx.response.body = result;
+  return result;
 }
 
 // 根据roomLink 找到所有的评论 以时间降序

@@ -6,26 +6,23 @@ const { _insertRoomToUser } = require('../models/user');
  * @param {} model 
  */
 const createRoom = (model) => {
-    let room = {
-        roomLink: model.roomLink,
-        title: model.title
-    }
     let userName = model.userName;
     let createRoom_ = new Promise(function (resolve, reject) {
         ChatRoomModel.create(model, function (err) {
             if (err && err.errmsg.match('E11000 duplicate key')) {
                 reject('该聊天室已存在');
+            } else {
+                resolve()
             }
-            resolve()
         });
     });
     let insertRoomToUser_ = new Promise(function (resolve, reject) {
         UserModel.findOne({ userName }, function (err, user) {
             if (err || !user){
                 reject('用户不存在');
-            }
-            else {
-                user.roomList.push(room);
+            } else {
+                let userModel = user.toObject();
+                user.roomList.push(model.roomLink);
                 user.save(function (err, user) {
                     if (err) reject('用户数据库异常');
                     resolve()
@@ -38,17 +35,23 @@ const createRoom = (model) => {
         .catch(msg => msg)
 }
 
-const _findRoomsByTitle = (title) => {
+const _findRoomsByTitle = (reg) => {
     // { title: { $regex: title }模糊查询
+     // let _filter = {
+    //     roomLink: { $regex: reg },
+    // };
+    // 多条件模糊查找 
     let _filter = {
-        title: { $regex: title },
-    };
+        $or: [ //多条件，数组
+            { roomLink: { $regex: reg } },
+            { title: { $regex: reg } }
+        ]
+    }
     // 指定返回的列
-    let rows = 'title roomLink annoucement';
+    let rows = 'title roomLink';
     return new Promise((resolve, reject) => {
         ChatRoomModel.find(_filter, rows, function (err, list) {
-            if (err) resolve(400);
-            resolve(list);
+            err ? resolve(400) : resolve(list);
         });
     }).then(list => list);
 }
@@ -61,20 +64,21 @@ const _findRoomByLink = (roomLink) => {
     return new Promise((resolve, reject) => {
         // chatroom仍然有schema限制
         ChatRoomModel.findOne({ roomLink }, function (err, chatroom) {
-            if (err) resolve(400);
-            CommentModel.find({ roomLink }, 'avatar content md moment userName').sort({ _id: 1 }).exec(function (err, converseList) {
-                if (err) resolve(400);
-                // 转换为一个新的不受Schema约束的对象
-                let result = chatroom.toObject() ;
-                result.converseList = converseList;
-                delete result._id;
-                delete result.__v;
-                delete result.title;
-                delete result.userName;
-                // 删除不必要的信息
-                resolve(result);
-            });
-            
+            if (err || !chatroom){
+                resolve(400)
+            }else {
+                CommentModel.find({ roomLink }, 'avatar content md moment userName').sort({ _id: 1 }).exec(function (err, converseList) {
+                    if (err) resolve(400);
+                    // 转换为一个新的不受Schema约束的对象
+                    let result = chatroom.toObject();
+                    result.converseList = converseList;
+                    delete result._id;
+                    delete result.__v;
+                    delete result.userName;
+                    // 删除不必要的信息
+                    resolve(result);
+                });
+            }
         });
     }).then(chatroom => chatroom)
 }
@@ -83,27 +87,23 @@ const _findRoomByLink = (roomLink) => {
  * 根据用户名返回roomList
  * @param {*} userName 
  */
-const _getRoomMenuByName = (userName) => {
-    // 默认用户
-    if(!userName) userName = "cooper";
+const _getRoomMenu = (userName) => {
+    // 默认用户 admin
+    if(!userName) userName = "admin";
     return new Promise((resolve, reject) => {
-        UserModel.find({ userName }, 'roomList', function (err, roomMenu) {
-            if (err) resolve(400);
-            if (roomMenu[0].roomList.length === 0) {
-                UserModel.find({ userName: 'cooper' }, 'roomList', function (err, roomMenu) {
-                    if (err) resolve(400);
-                    resolve(roomMenu[0].roomList);
-                });
-            } else {
-                resolve(roomMenu[0].roomList);
+        UserModel.findOne({ userName }, 'roomList', function (err, data) {
+            if (err || !data) {
+                reject(400);
+            }else{
+                data.roomList ? resolve(data.roomList) : resolve([])
             }
         });
-    }).then(roomMenu => roomMenu)
+    }).then(roomList => roomList)
 }
 
 module.exports = {
     createRoom,
     _findRoomsByTitle,
     _findRoomByLink,
-    _getRoomMenuByName
+    _getRoomMenu
 }

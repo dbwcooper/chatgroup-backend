@@ -6,6 +6,7 @@ const koaBody = require('koa-body');
 const cors = require('koa2-cors');
 // 后台api 路由 
 const router = require('./controller');
+const { createComment } = require('./controller/comment');
 const app = new Koa();
 
 
@@ -23,32 +24,35 @@ const wss = new WebSocket.Server({ server, path: '/comment'});
 
 //广播所有websocket用户
 
-wss.broadcast = function broadcast(data){
-  console.log('wss.clients', wss.clients)
-  wss.clients.forEach(client => {
-    if(client.readyState === WebSocket.OPEN) {
+wss.broadcast = function broadcast(data) {
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === WebSocket.OPEN) {
       client.send(data);
     }
   });
 };
-wss.on('open', (req) => {
-  console.log('req', req);
-})
-wss.on('connection', (ws) => {
-  ws.on('message', (data) => {
-    // 将得到的数据存入数据库 这里是一条聊天室信息
-    console.log('data', data);
-    let result = {
-      code: 200,
-      msg: 'success'
+// 还未做权限
+wss.on('connection', function connection(ws) {
+  ws.on('message', async function incoming(comment) {
+    let result = await createComment(comment);
+    if(result.code === 200) {
+      // 传递给所有连接的客户端
+      wss.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(comment);
+        }
+      });
+    } else {
+      // 返回状态码
+      ws.send(JSON.stringify(result), () => {
+        console.log('发送成功', result);
+      });
     }
-    
-    setTimeout(() => {
-      ws.send(JSON.stringify(result));
-    }, 1000);
-  })
+  });
+});
+wss.on('open', (req) => {
+  console.log('服务端启动成功');
 })
-
 
 
 

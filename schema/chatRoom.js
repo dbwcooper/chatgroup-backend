@@ -21,12 +21,7 @@ const ChatRoomSchema = new Schema({
     title: {
         type: Schema.Types.String,
     },
-    onlineList:[
-        {
-            userName: Schema.Types.String,
-            avatar: Schema.Types.Mixed,
-        }
-    ],
+    onlineList: [],
     annoucement: {
         type: Schema.Types.String,
     },
