@@ -42,11 +42,6 @@ const create =  async (ctx) => {
 const findRoomsByTitle = async (ctx) => {
     let title = ctx.params.title;
     let result = {};
-    if(!title) {
-        result.code = 400;
-        result.msg = "请输入title";
-        ctx.response.body = result;
-    }
 
     let data = await _findRoomsByTitle(title);
     if(data === 400) {
