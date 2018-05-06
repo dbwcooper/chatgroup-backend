@@ -8,7 +8,8 @@ const {
     login,
     logout,
     getUserList,
-    inviteUser
+    inviteUser,
+    verification
 } = require('./user');   // 引入用户模块逻辑层
 
 const {
@@ -29,6 +30,7 @@ router
     .post('user/logout', jwtVerify, logout)     // 用户注销    
     .get('user/list/:userName', getUserList)     // 根据用户名获取用户列表
     .post('user/invite', inviteUser)     // 根据用户名获取用户列表  
+    .get('user/token', jwtVerify, verification)     // 根据用户名获取用户列表
 
     // 聊天室相关api
     .post('chatroom/create', jwtVerify, create)   // 新建一个聊天室

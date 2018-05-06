@@ -13,12 +13,14 @@ const jwtVerify = async (ctx, next) => {
         if (token) {
             let decode = jwt.verify(token, SECRET);
             ctx.request.body.userName = decode.userName;
+            ctx.params.userName = decode.userName;
         }
         await next();
     } catch (e) {
+        // 使用了jwt的更下一层中间件如果抱错将被此中间件截获
         let result = {
             "code": 400,
-            "msg": "用户信息错误请重新登录"
+            "msg": "请重新登录"
         };
         ctx.response.body = result;
     }

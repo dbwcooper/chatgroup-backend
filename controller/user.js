@@ -13,7 +13,6 @@ const sha1 = require('sha1');
  */
 const register = async (ctx) => {
     let user = ctx.request.body;
-    console.log('user', user);
     let result = {}
     if (!user.userName || !user.pwd || user.pwd !== user.rpwd) {
         result.code = 400;
@@ -31,6 +30,33 @@ const register = async (ctx) => {
         result.msg = '恭喜你注册成功!';
         result.code = 200;
         result.data.token = token;
+    }
+    ctx.response.body = result;
+}
+
+/**
+ * 
+ * @param {* context} ctx 
+ * @param {* middle} next 
+ */
+const verification = async(ctx, next) => {
+    let userName = ctx.params.userName;
+    let result = {
+        code: 400,
+        msg: '用户信息错误'
+    };
+    if(!userName){
+        ctx.response.body = result;
+    } 
+    let data = await _findUserByName(userName);
+    if (data !== 400) {
+        result.code = 200;
+        result.msg = "获取成功!";
+        result.data = {
+            token: jwtSign(userName),
+            roomList: data.roomList,
+            avatar: data.avatar
+        };
     }
     ctx.response.body = result;
 }
@@ -122,5 +148,6 @@ module.exports = {
     login,
     logout,
     getUserList,
-    inviteUser
+    inviteUser,
+    verification
 }
