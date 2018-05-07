@@ -30,6 +30,7 @@ const register = async (ctx) => {
         result.msg = '恭喜你注册成功!';
         result.code = 200;
         result.data.token = token;
+        result.data.userName = user.userName;
     }
     ctx.response.body = result;
 }
@@ -55,7 +56,8 @@ const verification = async(ctx, next) => {
         result.data = {
             token: jwtSign(userName),
             roomList: data.roomList,
-            avatar: data.avatar
+            avatar: data.avatar,
+            userName,
         };
     }
     ctx.response.body = result;
@@ -88,7 +90,8 @@ const login = async (ctx, next) => {
         result.data = {
             token: jwtSign(user.userName),
             roomList: data.roomList,
-            avatar: data.avatar
+            avatar: data.avatar,
+            userName: user.userName
         };
     } else{
         result.code = 400;
@@ -138,7 +141,7 @@ const inviteUser = async (ctx, next) => {
     } else {
         result.code = 200;
         result.msg = '查询成功!';
-        result.data = data;
+        result.data = { onlineList: data };
     }
     ctx.response.body = result;
 }

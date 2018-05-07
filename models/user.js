@@ -73,26 +73,23 @@ const _getUserList = (userName) => {
 
 const _inviteUser = (model) => {
 
-    console.log('model', model);
     return new Promise((resolve, reject) => {
         UserModel.findOne({ userName: model.userName }, function (err, user) {
             if(err) {
                 resolve(400);
             }
-
             // 查询此用户是否在此聊天室内
             let flag = user.roomList.some(item => item === model.roomLink);
             if(!flag) {
                 // 用户未在此群组内
                 user.roomList.push(model.roomLink);
-                console.log('UserModeluser', err, user);
                 user.save((err) => {
                     if(err) {
                         resolve(400)
                     } else {
                         ChatRoomModel.findOne({ roomLink: model.roomLink }, (err, chatroom) => {
-                            chatroom.onlineList.push({ username: model.userName, avatar: user.avatar })
-                            console.log('chatroom onlineList', chatroom.onlineList);
+                            chatroom.onlineList.push({ username: model.userName, avatar: user.avatar });
+                            console.log('chatroom', chatroom)
                             chatroom.save((err) => {
                                 err ? resolve(400) : resolve(chatroom.onlineList)
                             });
