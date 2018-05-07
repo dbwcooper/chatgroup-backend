@@ -5,7 +5,7 @@ const Schema = require('mongoose').Schema;
  * roomLink: 聊天室名 只能为英文
  * moment: 创建时间
  * userName: 创建者
- * onlineUsers: 在线人数 -> { username, avatar: {} }
+ * onlineUsers: 在线人数 -> { userName, avatar: {} }
  * 
  */
 const ChatRoomSchema = new Schema({

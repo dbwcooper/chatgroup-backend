@@ -88,7 +88,7 @@ const _inviteUser = (model) => {
                         resolve(400)
                     } else {
                         ChatRoomModel.findOne({ roomLink: model.roomLink }, (err, chatroom) => {
-                            chatroom.onlineList.push({ username: model.userName, avatar: user.avatar });
+                            chatroom.onlineList.push({ userName: model.userName, avatar: user.avatar });
                             console.log('chatroom', chatroom)
                             chatroom.save((err) => {
                                 err ? resolve(400) : resolve(chatroom.onlineList)
